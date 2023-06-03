@@ -23,43 +23,14 @@ import java.util.Set;
 
 @Service
 public class BookServiceImpl implements IBookService {
-    private static final String imageDirectory = "C:\\Users\\QuangHuy\\OneDrive - ptit.edu.vn\\Desktop\\Lap trinh web\\project\\frontend\\public\\static\\book-covers\\";
 
     @Autowired
     private BookRepository bookRepository;
     @Autowired
     private BookConverter bookConverter;
-
     @Override
     public boolean checkDuplicated(Book book) {
         return bookRepository.findByTitleAndAuthor(book.getTitle(), book.getAuthor(), book.getId()) != null;
-    }
-
-    @Override
-    public String saveFile(MultipartFile image, Book book) {
-        if(image != null) {
-            try {
-                String fileName = image.getOriginalFilename();
-                int index = fileName.lastIndexOf('.');
-                String extension = fileName.substring(index);
-                System.out.println(extension);
-                if(index > 0 && (extension.equalsIgnoreCase(".jpg") || extension.equalsIgnoreCase(".png"))) {
-                    fileName = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new java.util.Date()) + extension;
-                    byte[] bytes = image.getBytes();
-                    Path path = Paths.get(imageDirectory + fileName);
-                    FileOutputStream fos = null;
-                    fos = new FileOutputStream(path.toString());
-                    fos.write(bytes);
-                    book.setImageUrl("/static/book-covers/" + fileName);
-                    System.out.println(fileName);
-                    System.out.println(book.getImageUrl());
-                }
-                else return "File không đúng định dạng!";
-            }catch (IOException e) {
-                return "Có lỗi khi lưu file!";
-            }
-        }
-        return "ok";
     }
 
     @Override

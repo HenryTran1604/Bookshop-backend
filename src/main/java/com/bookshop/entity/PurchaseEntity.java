@@ -37,6 +37,6 @@ public class PurchaseEntity {
     private String purchaseStatus;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "purchase")
     List<PurchaseDetailEntity> purchaseDetailList;
 }

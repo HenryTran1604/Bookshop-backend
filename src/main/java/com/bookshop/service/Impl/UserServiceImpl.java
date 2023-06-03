@@ -1,7 +1,11 @@
 package com.bookshop.service.Impl;
 
+import com.bookshop.DTO.Register;
+import com.bookshop.DTO.User;
+import com.bookshop.converter.UserConverter;
 import com.bookshop.repository.UserRepository;
 import com.bookshop.entity.UserEntity;
+import com.bookshop.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,35 +13,55 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl {
+public class UserServiceImpl implements IUserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserConverter userConverter;
 
-    public boolean checkDuplicate(UserEntity user) {
+    @Override
+    public boolean checkDuplicated(User user) {
         return userRepository.findByUsername(user.getUsername(), user.getId()) != null;
     }
 
-    public List<UserEntity> getAllUsers() {
-        return userRepository.findAll();
+    @Override
+    public boolean checkUsedEmail(String username, String email) {
+        return userRepository.findByUsernameNotAndEmail(username, email) != null;
     }
 
-    public UserEntity getUserByID(int uID) {
-        Optional<UserEntity> user = userRepository.findById(uID);
-        if (user.isPresent())
-            return user.get();
-        return new UserEntity();
+    @Override
+    public List<User> getAllUsers() {
+        List<UserEntity> entities = userRepository.findAll();
+        List<User> responses = entities.stream().map(userConverter::toDto).toList();
+        return responses;
     }
 
-    public UserEntity getUserByUsernameAndPassword(String username, String password) {
-        return userRepository.findByUsernameAndPassword(username, password);
+    @Override
+    public User getUserByID(int uID) {
+        Optional<UserEntity> opt = userRepository.findById(uID);
+        if (opt.isPresent())
+            return userConverter.toDto(opt.get());
+        return new User();
     }
 
-    public void addUser(UserEntity user) {
-        userRepository.save(user);
+    @Override
+    public User getUserByUsernameAndPassword(String username, String password) {
+        UserEntity entity = userRepository.findByUsernameAndPassword(username, password);
+        return entity == null ? null : userConverter.toDto(entity);
     }
-
-    public void updateUser(UserEntity user) { userRepository.save(user); }
-
+    @Override
+    public Register addUser(Register user) {
+        UserEntity entity = userConverter.toEntity(user);
+        Register response = userConverter.toDtoRegister(userRepository.save(entity));
+        return response;
+    }
+    @Override
+    public Register updateUser(Register user) {
+        UserEntity entity = userConverter.toEntity(user);
+        Register response = userConverter.toDtoRegister(userRepository.save(entity));
+        return response;
+    }
+    @Override
     public void deleteUser(int uID) {
         userRepository.deleteById(uID);
     }

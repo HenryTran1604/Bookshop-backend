@@ -8,7 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface IBookService {
     boolean checkDuplicated(Book book);
-    String saveFile(MultipartFile image, Book book);
     List <Book> getAllBooks();
     List <Book> getBookByTitleContaining(String title);
     Set<String> getAllAuthors();

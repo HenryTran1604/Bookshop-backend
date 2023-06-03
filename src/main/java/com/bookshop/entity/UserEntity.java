@@ -44,10 +44,4 @@ public class UserEntity {
     @Column(nullable = false)
     private boolean active ;
 
-    @ManyToMany
-    @JoinTable(name = "purchase",
-            joinColumns = @JoinColumn(name = "id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    public List <PurchaseEntity> purchaseList;
 }
