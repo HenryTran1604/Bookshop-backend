@@ -2,6 +2,7 @@ package com.bookshop.service.Impl;
 
 import com.bookshop.DTO.Register;
 import com.bookshop.DTO.User;
+import com.bookshop.converter.RegisterConverter;
 import com.bookshop.converter.UserConverter;
 import com.bookshop.repository.UserRepository;
 import com.bookshop.entity.UserEntity;
@@ -18,6 +19,8 @@ public class UserServiceImpl implements IUserService {
     private UserRepository userRepository;
     @Autowired
     private UserConverter userConverter;
+    @Autowired
+    private RegisterConverter registerConverter;
 
     @Override
     public boolean checkDuplicated(User user) {
@@ -50,15 +53,15 @@ public class UserServiceImpl implements IUserService {
         return entity == null ? null : userConverter.toDto(entity);
     }
     @Override
-    public Register addUser(Register user) {
-        UserEntity entity = userConverter.toEntity(user);
-        Register response = userConverter.toDtoRegister(userRepository.save(entity));
+    public Register addUser(Register register) {
+        UserEntity entity = registerConverter.toEntity(register);
+        Register response = registerConverter.toDtoRegister(userRepository.save(entity));
         return response;
     }
     @Override
-    public Register updateUser(Register user) {
-        UserEntity entity = userConverter.toEntity(user);
-        Register response = userConverter.toDtoRegister(userRepository.save(entity));
+    public Register updateUser(Register register) {
+        UserEntity entity = registerConverter.toEntity(register);
+        Register response = registerConverter.toDtoRegister(userRepository.save(entity));
         return response;
     }
     @Override

@@ -39,4 +39,9 @@ public class CategoryController {
         categoryService.addCategory(category);
         return ResponseEntity.ok(null);
     }
+
+    @DeleteMapping("/category/delete/{cId}")
+    public void deleteCategory(@PathVariable int cId) {
+        categoryService.deleteCategory(cId);
+    }
 }

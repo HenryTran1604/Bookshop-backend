@@ -36,11 +36,11 @@ public class CommentController {
     public ResponseEntity<String> addComment(@RequestBody Comment comment) {
 
         commentService.addComment(comment);
-        return ResponseEntity.ok("ok");
+        return ResponseEntity.ok().build();
     }
     @DeleteMapping("/comment/delete/{cId}")
     public ResponseEntity<String> deleteComment(@PathVariable Integer cId) {
         commentService.deleteComment(cId);
-        return ResponseEntity.ok("Xoa thanh cong");
+        return ResponseEntity.ok().build();
     }
 }

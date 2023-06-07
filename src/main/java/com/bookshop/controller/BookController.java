@@ -6,7 +6,6 @@ import com.bookshop.service.Impl.BookServiceImpl;
 import com.bookshop.service.Impl.CategoryServiceImpl;
 import com.bookshop.service.Impl.FileServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +20,7 @@ import java.util.Set;
 @RequestMapping("/api/")
 
 public class BookController {
-    private static final String imageDirectory = "C:\\Users\\QuangHuy\\OneDrive - ptit.edu.vn\\Desktop\\Lap trinh web\\project\\frontend\\public\\static\\book-covers\\";
+    private static final String imageDirectory = "../frontend/public/static/book-covers/";
 
     @Autowired
     private BookServiceImpl bookServiceImpl;
@@ -50,21 +49,17 @@ public class BookController {
 
     @GetMapping("/authors")
     public Set<String> getAllAuthors() {
-        Set<String> authors = bookServiceImpl.getAllAuthors();
-        return authors;
+        return bookServiceImpl.getAllAuthors();
     }
 
     @GetMapping("/books")
     public List<Book> getAllBooks() {
-        List<Book> books = bookServiceImpl.getAllBooks();
-        System.out.println(books);
-        return books;
+        return bookServiceImpl.getAllBooks();
     }
 
     @GetMapping("/book/{bID}")
     public Book getBook(@PathVariable String bID) {
-        Book book = bookServiceImpl.getBookByID(Integer.parseInt(bID));
-        return book;
+        return bookServiceImpl.getBookByID(Integer.parseInt(bID));
     }
 
     @GetMapping("/book/search")
@@ -101,17 +96,20 @@ public class BookController {
                                           @RequestParam String publicationDate, @RequestParam Integer pages, @RequestParam Integer price,
                                           @RequestParam String imageUrl, @RequestParam String description) {
         System.out.println("PÓTTTTTTTTTTTTTTTTTTTTTT");
-//        Book book = createBook(id, title, author, categoryId, publicationDate, pages, price, imageUrl, description);
-//        if (bookServiceImpl.checkDuplicated(book)) {
-//            System.out.println("sách đã tồn tại");
-//            return ResponseEntity.badRequest().body("Sách đã tồn tại!");
-//        }
-//        String respone = bookServiceImpl.saveFile(image, book);
-//        if (respone.equals("ok")) {
-//            bookServiceImpl.addBook(book);
-//            return ResponseEntity.ok().build();
-//        }
-        return ResponseEntity.badRequest().body("respone");
+       Book book = createBook(id, title, author, categoryId, publicationDate, pages, price, imageUrl, description);
+        if (bookServiceImpl.checkDuplicated(book)) {
+            return ResponseEntity.badRequest().body("Sách đã tồn tại");
+        }
+        if (image != null) {
+            String fileName = fileService.saveFile(image, imageDirectory);
+            if (fileName.equals("error")) {
+                return ResponseEntity.badRequest().body("File không đúng định dạng!");
+            }
+            book.setImageUrl("/static/book-covers/" + fileName);
+        }
+        bookServiceImpl.addBook(book);
+        System.out.println(book.getImageUrl());
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/book/delete/{bID}")

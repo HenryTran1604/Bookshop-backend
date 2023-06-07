@@ -27,8 +27,15 @@ public class PurchaseEntity {
     private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id", nullable = false)
+    private BookEntity book;
+
+    @Column(nullable = false)
+    private int quantity;
 
     @Column(name = "purchase_date", nullable = false)
     private Date purchaseDate;
@@ -36,7 +43,5 @@ public class PurchaseEntity {
     @Column(name = "purchase_status", nullable = false)
     private String purchaseStatus;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "purchase")
-    List<PurchaseDetailEntity> purchaseDetailList;
+
 }

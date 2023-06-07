@@ -3,6 +3,7 @@ package com.bookshop.entity;
 import java.sql.Date;
 import java.util.List;
 
+import com.bookshop.DTO.Purchase;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
@@ -42,19 +43,18 @@ public class BookEntity {
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<PurchaseDetailEntity> purchaseDetailList;
+    private List<PurchaseEntity> purchaseList;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<CommentEntity> commentList;
     public int sold() {
         int num = 0;
-        if(purchaseDetailList != null) {
-            for(PurchaseDetailEntity entity : this.purchaseDetailList) {
+        if(purchaseList != null) {
+            for(PurchaseEntity entity : this.purchaseList) {
                 num += entity.getQuantity();
             }
         }
-
         return num;
     }
 

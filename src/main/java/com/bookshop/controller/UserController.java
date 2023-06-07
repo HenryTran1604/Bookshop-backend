@@ -2,6 +2,7 @@ package com.bookshop.controller;
 
 import com.bookshop.DTO.Register;
 import com.bookshop.DTO.User;
+import com.bookshop.converter.RegisterConverter;
 import com.bookshop.converter.UserConverter;
 import com.bookshop.entity.UserEntity;
 import com.bookshop.service.Impl.FileServiceImpl;
@@ -11,17 +12,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/api/")
 public class UserController {
-    private static final String imageDirectory = "C:\\Users\\QuangHuy\\OneDrive - ptit.edu.vn\\Desktop\\Lap trinh web\\project\\frontend\\public\\static\\avatars\\";
+    private static final String imageDirectory = "../frontend/public/static/avatars/";
 
     @Autowired
     private UserServiceImpl userService;
     @Autowired
-    private UserConverter userConverter;
+    private RegisterConverter registerConverter;
     @Autowired
     private FileServiceImpl fileService;
 
@@ -41,7 +43,7 @@ public class UserController {
     }
 
     @PutMapping("/user/save/{uid}")
-    public ResponseEntity<String> upDateUser(@RequestParam(required = false) MultipartFile avatar, @RequestParam int id,
+    public ResponseEntity<User> updateUser(@RequestParam(required = false) MultipartFile avatar, @RequestParam int id,
                                              @RequestParam String username, @RequestParam String password,
                                              @RequestParam String fullName, @RequestParam String email,
                                              @RequestParam String avatarUrl, @RequestParam String role, @RequestParam boolean active) {
@@ -49,39 +51,39 @@ public class UserController {
         System.out.println(email );
 
         if (userService.checkUsedEmail(username, email)) {
-            return ResponseEntity.badRequest().body("Email đã được người khác sử dụng!");
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"Email đã được nguời khác sử dụng");
         }
         if (avatar != null) {
             String fileName = fileService.saveFile(avatar, imageDirectory);
             if (fileName.equals("error")) {
-                return ResponseEntity.badRequest().body("File không đúng định dạng!");
+                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"File không đúng định dạng");
             }
             user.setAvatarUrl("/static/avatars/" + fileName);
-        }
+        }System.out.println(user.getAvatarUrl());
         userService.updateUser(user);
-        System.out.println(user.getAvatarUrl());
-        return ResponseEntity.ok().build();
+
+        return new ResponseEntity<>(registerConverter.toDtoUser(user), HttpStatus.OK);
     }
 
     @PostMapping("/user/save/{uid}")
-    public ResponseEntity<String> addUser(@RequestParam(required = false) MultipartFile avatar, @RequestParam int id,
+    public ResponseEntity<User> addUser(@RequestParam(required = false) MultipartFile avatar, @RequestParam int id,
                                           @RequestParam String username, @RequestParam String password,
                                           @RequestParam String fullName, @RequestParam String email,
                                           @RequestParam String avatarUrl, @RequestParam String role, @RequestParam boolean active) {
         Register user = new Register(id, username, password, fullName, email, avatarUrl, role, active);
         System.out.println(id + username + password +  fullName +  email + avatarUrl + role+ active);
         if (userService.checkUsedEmail(username, email)) {
-            return ResponseEntity.badRequest().body("Email đã được người khác sử dụng!");
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"Email đã được nguời khác sử dụng");
         }
         if (avatar != null) {
             String fileName = fileService.saveFile(avatar, imageDirectory);
             if (fileName.equals("error")) {
-                return ResponseEntity.badRequest().body("File không đúng định dạng!");
+                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"File không đúng định dạng");
             }
             user.setAvatarUrl("/static/avatars/" + fileName);
         }
         userService.addUser(user);
         System.out.println(user.getAvatarUrl());
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(registerConverter.toDtoUser(user), HttpStatus.OK);
     }
 }
