@@ -52,10 +52,12 @@ public class BookController {
         return bookServiceImpl.getAllAuthors();
     }
 
-    @GetMapping("/books")
+    @GetMapping("/allbooks")
     public List<Book> getAllBooks() {
         return bookServiceImpl.getAllBooks();
     }
+    @GetMapping("/books")
+    public List<Book> getAllAvailableBooks() {return bookServiceImpl.getAllBooksAvailable();}
 
     @GetMapping("/book/{bID}")
     public Book getBook(@PathVariable String bID) {
@@ -84,6 +86,7 @@ public class BookController {
             }
             book.setImageUrl("/static/book-covers/" + fileName);
         }
+        book.setAvailable(1);
         bookServiceImpl.addBook(book);
         System.out.println(book.getImageUrl());
         return ResponseEntity.ok().build();
@@ -107,14 +110,14 @@ public class BookController {
             }
             book.setImageUrl("/static/book-covers/" + fileName);
         }
+        book.setAvailable(1);
         bookServiceImpl.addBook(book);
-        System.out.println(book.getImageUrl());
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/book/delete/{bID}")
     public ResponseEntity<String> deleteBook(@PathVariable Integer bID) {
-        bookServiceImpl.deleteBook(bID);
+        bookServiceImpl.setNotAvailable(bID);
         return ResponseEntity.ok().build();
     }
 }

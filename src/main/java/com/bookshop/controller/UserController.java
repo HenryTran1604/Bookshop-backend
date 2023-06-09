@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/api/")
@@ -35,7 +37,10 @@ public class UserController {
         }
         return ResponseEntity.badRequest().build();
     }
-
+    @PostMapping("users")
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
     @PostMapping("/user")
     public User getUser(@RequestParam int id) {
         User user = userService.getUserByID(id);
@@ -71,14 +76,16 @@ public class UserController {
                                           @RequestParam String fullName, @RequestParam String email,
                                           @RequestParam String avatarUrl, @RequestParam String role, @RequestParam boolean active) {
         Register user = new Register(id, username, password, fullName, email, avatarUrl, role, active);
-        System.out.println(id + username + password +  fullName +  email + avatarUrl + role+ active);
         if (userService.checkUsedEmail(username, email)) {
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"Email đã được nguời khác sử dụng");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Email đã được nguời khác sử dụng");
+        }
+        if(userService.checkUsedUsername(username)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Username đã được nguời khác sử dụng");
         }
         if (avatar != null) {
             String fileName = fileService.saveFile(avatar, imageDirectory);
             if (fileName.equals("error")) {
-                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"File không đúng định dạng");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"File không đúng định dạng");
             }
             user.setAvatarUrl("/static/avatars/" + fileName);
         }

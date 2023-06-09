@@ -48,6 +48,12 @@ public class PurchaseController {
         Purchase response = purchaseService.addPurchase(purchase);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @PostMapping("/confirm")
+    public ResponseEntity<Purchase> confirm(@RequestBody Purchase purchase) {
+        Purchase response = purchaseService.updatePurchase(purchase);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @DeleteMapping("/cart/delete/{pid}")
     public void deleteCartItem(@PathVariable int pid) {
         System.out.println(pid);

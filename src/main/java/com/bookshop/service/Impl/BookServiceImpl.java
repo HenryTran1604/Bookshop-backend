@@ -1,6 +1,7 @@
 package com.bookshop.service.Impl;
 
 import com.bookshop.DTO.Book;
+import com.bookshop.DTO.Category;
 import com.bookshop.converter.BookConverter;
 import com.bookshop.repository.BookRepository;
 import com.bookshop.service.IBookService;
@@ -36,6 +37,13 @@ public class BookServiceImpl implements IBookService {
     @Override
     public List<Book> getAllBooks() {
         List<BookEntity> entities = bookRepository.findAll();
+        List<Book> responses = entities.stream().map(bookConverter::toDto).toList();
+        return responses;
+    }
+
+    @Override
+    public List<Book> getAllBooksAvailable() {
+        List<BookEntity> entities = bookRepository.findByAvailable(1);
         List<Book> responses = entities.stream().map(bookConverter::toDto).toList();
         return responses;
     }
@@ -77,6 +85,14 @@ public class BookServiceImpl implements IBookService {
     @Override
     public Book updateBook(Book book) {
         BookEntity entity = bookConverter.toEntity(book);
+        Book response = bookConverter.toDto(bookRepository.save(entity));
+        return response;
+    }
+
+    @Override
+    public Book setNotAvailable(int bId) {
+        BookEntity entity = bookRepository.findById(bId).get();
+        entity.setAvailable(0);
         Book response = bookConverter.toDto(bookRepository.save(entity));
         return response;
     }

@@ -1,6 +1,8 @@
 package com.bookshop.controller;
 
+import com.bookshop.DTO.Book;
 import com.bookshop.DTO.Category;
+import com.bookshop.entity.BookEntity;
 import com.bookshop.service.Impl.CategoryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,15 +29,25 @@ public class CategoryController {
         Category category = categoryService.getCategoryByID(Integer.valueOf(id));
         return category;
     }
+    @GetMapping("/category/{cId}/books")
+    public List<Book> getBookByCategory(@PathVariable int cId) {
+        return categoryService.getBookByCategory(cId);
+    }
 
     @PutMapping("/category/save/{id}")
-    public ResponseEntity<String> updateCategory(@PathVariable String id, @RequestBody Category category) {
+    public ResponseEntity<String> updateCategory(@PathVariable int id, @RequestBody Category category) {
+        if(categoryService.checkUsedCategoryName(category.getCategoryName(), id)) {
+            return ResponseEntity.badRequest().body("Thể loại này đã tồn tại!");
+        }
         categoryService.updateCategory(category);
         return ResponseEntity.ok(null);
     }
 
     @PostMapping("/category/save/{id}")
-    public ResponseEntity<String> addCategory(@PathVariable String id, @RequestBody Category category) {
+    public ResponseEntity<String> addCategory(@PathVariable int id, @RequestBody Category category) {
+        if(categoryService.checkUsedCategoryName(category.getCategoryName(), id)) {
+            return ResponseEntity.badRequest().body("Thể loại này đã tồn tại!");
+        }
         categoryService.addCategory(category);
         return ResponseEntity.ok(null);
     }

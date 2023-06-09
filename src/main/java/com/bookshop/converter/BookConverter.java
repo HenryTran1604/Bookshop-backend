@@ -20,6 +20,7 @@ public class BookConverter {
         entity.setCategory(converter.toEntity((dto.getCategory())));
         entity.setPrice(dto.getPrice());
         entity.setImageUrl(dto.getImageUrl());
+        entity.setAvailable(dto.getAvailable());
         return entity;
     }
     public Book toDto(BookEntity entity) {
@@ -36,6 +37,7 @@ public class BookConverter {
         dto.setRate(entity.averageRate());
         dto.setSold(entity.sold());
         dto.setCommentNum(entity.getCommentList() == null ? 0 : entity.getCommentList().size());
+        dto.setAvailable(entity.getAvailable());
         return dto;
     }
 }

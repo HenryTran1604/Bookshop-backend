@@ -2,7 +2,6 @@ package com.bookshop.entity;
 
 import java.sql.Date;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

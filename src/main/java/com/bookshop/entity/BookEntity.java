@@ -41,11 +41,13 @@ public class BookEntity {
 
     private int price;
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    private int available;
+
+    @OneToMany(mappedBy = "book")
     @JsonIgnore
     private List<PurchaseEntity> purchaseList;
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "book")
     @JsonIgnore
     private List<CommentEntity> commentList;
     public int sold() {

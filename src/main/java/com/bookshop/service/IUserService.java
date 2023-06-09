@@ -6,7 +6,7 @@ import com.bookshop.DTO.User;
 import java.util.List;
 
 public interface IUserService {
-    public boolean checkDuplicated(User user);
+    public boolean checkUsedUsername(String username);
     public boolean checkUsedEmail(String username, String email);
 
     public List<User> getAllUsers();

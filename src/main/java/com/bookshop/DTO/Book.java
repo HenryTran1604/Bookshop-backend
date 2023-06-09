@@ -25,4 +25,5 @@ public class Book {
     private int commentNum;
     private String imageUrl;
     private String description;
+    private int available;
 }

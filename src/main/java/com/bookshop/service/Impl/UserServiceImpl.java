@@ -23,8 +23,8 @@ public class UserServiceImpl implements IUserService {
     private RegisterConverter registerConverter;
 
     @Override
-    public boolean checkDuplicated(User user) {
-        return userRepository.findByUsername(user.getUsername(), user.getId()) != null;
+    public boolean checkUsedUsername(String username) {
+        return userRepository.findByUsername(username) != null;
     }
 
     @Override

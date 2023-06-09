@@ -1,6 +1,8 @@
 package com.bookshop.service.Impl;
 
+import com.bookshop.DTO.Book;
 import com.bookshop.DTO.Category;
+import com.bookshop.converter.BookConverter;
 import com.bookshop.converter.CategoryConverter;
 import com.bookshop.repository.CategoryRepository;
 import com.bookshop.service.ICategoryService;
@@ -17,6 +19,20 @@ public class CategoryServiceImpl implements ICategoryService {
     private CategoryRepository categoryRepository;
     @Autowired
     private CategoryConverter categoryConverter;
+    @Autowired
+    private BookConverter bookConverter;
+
+    @Override
+    public boolean checkUsedCategoryName(String name, int cid) {
+        return categoryRepository.findByCategoryName(name, cid) != null;
+    }
+
+    @Override
+    public List<Book> getBookByCategory(int cId) {
+        CategoryEntity entity = categoryRepository.findById(cId).get();
+        return entity.getBookList().stream().map(bookConverter::toDto).toList();
+    }
+
     public List <Category> getAllCategories() {
         List<CategoryEntity> entities = categoryRepository.findAll();
         List<Category> responses = entities.stream().map(categoryConverter::toDto).toList();

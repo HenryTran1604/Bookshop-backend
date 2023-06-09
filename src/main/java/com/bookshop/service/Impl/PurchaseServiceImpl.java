@@ -38,6 +38,7 @@ public class PurchaseServiceImpl implements IPurchaseService {
 
     @Override
     public List<Purchase> getUserCart(User user) {
+        System.out.println(user.getUsername());
         List<PurchaseEntity> entities = purchaseRepository.findByUserAndPurchaseStatus(userConverter.toEntity(user), "in-cart");
         List<Purchase> responses = entities.stream().map(purchaseConverter::toDto).toList();
         return responses;
